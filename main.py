@@ -20,3 +20,13 @@ def createDataFiles(projectName,baseUrl):
         writeFile(queue, baseUrl)
     if not os.path.isfile(crawled):
         writeFile(crawled, '')
+
+# Add data to an existing file
+def addToFile(path, data):
+    with open (path, 'a') as f:
+        f.write(data + "\n")
+
+# Delete file content
+def delFileContent(path):
+    with open(path, 'w'):
+        pass
