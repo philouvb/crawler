@@ -14,8 +14,8 @@ def createDir(directory):
 
 # Create crawling files 'QUEUE & CRAWLED'
 def createDataFiles(projectName,baseUrl):
-    queue = projectName + 'queue.txt'
-    crawled = projectName + 'crawled.txt'
+    queue = projectName + '/queue.txt'
+    crawled = projectName + '/crawled.txt'
     if not os.path.isfile(queue):
         writeFile(queue, baseUrl)
     if not os.path.isfile(crawled):
