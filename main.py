@@ -30,3 +30,17 @@ def addToFile(path, data):
 def delFileContent(path):
     with open(path, 'w'):
         pass
+
+# Convert file to a set
+def fileToSet(fileName):
+    res = set()
+    with open (fileName,'rt') as f:
+        for line in f:
+            res.add(line.replace('\n', ''))
+    return res
+
+# Convert a set to a file
+def setToFile(links,fileName):
+    delFileContent(fileName)
+    for link in sorted(links):
+        addToFile(fileName,link)
