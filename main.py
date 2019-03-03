@@ -1,46 +1,44 @@
-import os
+import threading
+from queue import Queue
+from spider import Spider
+from domain import *
+from general import *
+import sys
 
-# Create a new file
-def writeFile(path, data):
-    f = open(path,'w')
-    f.write(data)
-    f.close()
+sys.setrecursionlimit(50000)
 
-# Create directories for the crawling project
-def createDir(directory):
-    if not os.path.exists(directory):
-        print('Creating project directory' + directory)
-        os.makedirs(directory)
+PROJECT_NAME = '7sur7'
+HOMEPAGE = 'https://www.7sur7.be/'
+DOMAIN_NAME = get_domain_name(HOMEPAGE)
+QUEUE_FILE = PROJECT_NAME + '/queue.txt'
+CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
+NUMBER_OF_THREADS = 6
+queue = Queue()
+Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
 
-# Create crawling files 'QUEUE & CRAWLED'
-def createDataFiles(projectName,baseUrl):
-    queue = projectName + '/queue.txt'
-    crawled = projectName + '/crawled.txt'
-    if not os.path.isfile(queue):
-        writeFile(queue, baseUrl)
-    if not os.path.isfile(crawled):
-        writeFile(crawled, '')
+def create_workers():
+    for _ in range(NUMBER_OF_THREADS):
+        t = threading.Thread(target=work)
+        t.daemon = True
+        t.start()
 
-# Add data to an existing file
-def addToFile(path, data):
-    with open (path, 'a') as f:
-        f.write(data + "\n")
+def work():
+    while True:
+        url = queue.get()
+        Spider.crawl_page(threading.current_thread().name, url)
+        queue.task_done()
 
-# Delete file content
-def delFileContent(path):
-    with open(path, 'w'):
-        pass
+def create_jobs():
+    for link in fileToSet(QUEUE_FILE):
+        queue.put(link)
+    queue.join()
+    crawl()
 
-# Convert file to a set
-def fileToSet(fileName):
-    res = set()
-    with open (fileName,'rt') as f:
-        for line in f:
-            res.add(line.replace('\n', ''))
-    return res
+def crawl():
+    queued_links = fileToSet(QUEUE_FILE)
+    if len(queued_links) > 0:
+        print(str(len(queued_links)) + ' links in the queue')
+        create_jobs()
 
-# Convert a set to a file
-def setToFile(links,fileName):
-    delFileContent(fileName)
-    for link in sorted(links):
-        addToFile(fileName,link)
+create_workers()
+crawl()
