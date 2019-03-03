@@ -7,8 +7,8 @@ import sys
 
 sys.setrecursionlimit(50000)
 
-PROJECT_NAME = '7sur7'
-HOMEPAGE = 'https://www.7sur7.be/'
+PROJECT_NAME = 'Project-Name'
+HOMEPAGE = 'https://www.tartempion.be/'
 DOMAIN_NAME = get_domain_name(HOMEPAGE)
 QUEUE_FILE = PROJECT_NAME + '/queue.txt'
 CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
